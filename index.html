@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para Vale ♡</title>
+    <meta name="theme-color" content="#E8FFFC">
+    <meta property="og:title" content="Para Vale ♡">
+    <meta property="og:description" content="Tengo algo especial para ti ✨">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/epic.css">
+</head>
+<body class="no-scroll">
+
+    <div id="progress-bar"></div>
+
+    <button id="music-btn" class="hidden-element glass-btn">
+        <span id="music-icon">🎵</span>
+    </button>
+    <audio id="bg-music" autoplay loop preload="auto">
+        <source src="audio/CumpleVale.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- INICIO -->
+    <div id="welcome-screen">
+        <canvas id="particle-canvas"></canvas>
+        <div class="welcome-content glass-card pulse-glow">
+            <p class="fade-text">Preparé algo especial para celebrar tus 20...</p>
+            <h1 class="welcome-name fade-text delay-1">Valeria ♡</h1>
+            <button id="open-gift-btn" class="elegant-btn fade-text delay-2">Comenzar la experiencia ✨</button>
+            <p class="fade-text delay-2" style="margin-top:18px;font-size:.75rem;color:var(--text-light)">7 meses al lado de mi bonita <3</p>
+        </div>
+    </div>
+
+    <main id="main-content" class="hidden-element">
+        
+        <!-- HERO -->
+        <section id="hero" class="observe">
+            <div class="hero-content">
+                <h2 class="script-title">Feliz cumpleaños, mi bebita❤️</h2>
+                <div class="number-20-container">
+                    <span class="number-20">20</span>
+                    <div class="sparkle s1">✨</div>
+                    <div class="sparkle s2">✨</div>
+                </div>
+                <p class="hero-text">Hoy agradezco a Dios por regalarle al mundo una persona tan especial, y por permitirme compartir mi vida contigo.</p>
+                <div class="scroll-indicator">
+                    <span>Desliza para continuar</span>
+                    <div class="arrow-down"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MINIJUEGO 1: RASPA Y DESCUBRE -->
+        <section id="scratch-section" class="observe">
+            <h2 class="script-title">Un pequeño secreto...</h2>
+            <p class="subtitle">Toca la tarjeta para descubrir tu mensaje ♡</p>
+            <div class="scratch-container glass-card">
+                <!-- Mensaje oculto -->
+                <div class="scratch-secret" aria-hidden="true">
+                    <h3 class="script-title small">Vale,</h3>
+                    <p>Eres la coincidencia más bonita de mi vida y mi bendición más grande. Te amo.</p>
+                    <p class="signature">- Henry ♡</p>
+                </div>
+                <button id="scratch-pad" class="scratch-cover" type="button" aria-label="Toca para descubrir tu mensaje">
+                    <span>Toca aquí ♡</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN CRISTIANA -->
+        <section id="faith-section" class="observe">
+            <div class="faith-container celestial-bg glass-card">
+                <div class="cross-icon">💎</div>
+                <h2 class="script-title">Una bendición para tu nuevo año</h2>
+                <div class="bible-verse">
+                    <p>"Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis."</p>
+                    <span class="verse-ref">— Jeremías 29:11</span>
+                </div>
+                <p class="prayer-text">Mi oración es que Dios continúe guiando cada uno de tus pasos y que este nuevo año de vida esté lleno de propósito, amor y bendiciones.</p>
+            </div>
+        </section>
+
+        <!-- MINIJUEGO 2: MEMORIA -->
+        <section id="memory-section" class="observe">
+            <h2 class="script-title">Nuestra conexión</h2>
+            <p class="subtitle">Encuentra las parejas para desbloquear la galería</p>
+            <div class="memory-board" id="memory-board">
+                <!-- Tarjetas generadas por JS -->
+            </div>
+            <p id="memory-success" class="hidden-element success-text">¡Lo lograste! ✨ ves que si tenes buena memoria.</p>
+        </section>
+
+        <!-- GALERÍA (Se revela tras el juego) -->
+        <section id="gallery-section" class="observe blur-locked">
+            <h2 class="script-title">Nuestros recuerdos</h2>
+            <p class="subtitle">Desliza para ver más ♡</p>
+            <div class="carousel" id="photo-carousel"></div>
+        </section>
+
+        <!-- TIEMPO JUNTOS -->
+        <section id="time-section" class="observe">
+            <h2 class="script-title">Nuestro tiempo juntos</h2>
+            <p class="subtitle">Cada segundo contigo cuenta ♡</p>
+            <div class="time-grid" id="time-grid">
+                <div class="time-box glass-card"><b>0</b><small>días</small></div>
+                <div class="time-box glass-card"><b>0</b><small>horas</small></div>
+                <div class="time-box glass-card"><b>0</b><small>min</small></div>
+                <div class="time-box glass-card"><b>0</b><small>seg</small></div>
+            </div>
+        </section>
+
+        <!-- 20 RAZONES -->
+        <section id="reasons-section" class="observe">
+            <h2 class="script-title">20 razones por las que te amo</h2>
+            <p class="subtitle">Toca cada destello para descubrir una razón</p>
+            <div class="reasons-grid" id="reasons-grid"></div>
+            
+            <div id="reason-modal" class="modal glass-card">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <div class="modal-icon">♡</div>
+                    <p id="reason-text"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOBRES -->
+        <section id="envelopes-section" class="observe">
+            <h2 class="script-title">Para cuando lo necesites...</h2>
+            <p class="subtitle">Abre un sobre cuando sientas que es el momento correcto</p>
+            <div class="envelopes-container" id="envelopes-container"></div>
+        </section>
+
+        <!-- MINIJUEGO 3: BOTÓN ESCURRIDIZO -->
+        <section id="minigame-section" class="observe">
+            <div class="glass-card game-card">
+                <h2 class="script-title small">Una pregunta importante...</h2>
+                <p class="minigame-question">¿Cuánto crees que te amo?</p>
+                <div class="minigame-buttons">
+                    <button class="game-btn runaway glass-btn" id="btn-mucho">Mucho</button>
+                    <button class="game-btn runaway glass-btn" id="btn-muchisimo">Muchísimo</button>
+                    <button class="game-btn correct glass-btn" id="btn-infinito">Más de lo que imaginas</button>
+                </div>
+                <p id="game-result" class="hidden-element success-text">¡Respuesta incorrecta... No existe una medida suficiente! ♡</p>
+            </div>
+        </section>
+
+        <!-- SORPRESA FINAL -->
+        <section id="surprise-section" class="observe">
+            <button id="surprise-btn" class="elegant-btn pulse-btn">Hay una última sorpresa...</button>
+            
+            <div id="final-message" class="hidden-element glass-card gold-border">
+                <h2 class="script-title">Feliz cumpleaños, Vale ♡</h2>
+                <p>Que Dios te permita cumplir muchísimos años más y ojalá yo pueda seguir celebrándolos contigo.</p>
+                <div class="closing-words">
+                    <p>El capítulo 20 acaba de comenzar...</p>
+                    <p>Y deseo que esté lleno de sueños cumplidos, bendiciones, aventuras y muchos momentos juntos.</p>
+                    <p class="signature">Con todo mi amor, Henry ♡</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="js/script.js"></script>
+    <script src="js/epic.js"></script>
+    𝖍𝖊𝖓𝖗𝖞 ©
+</body>
+</html>
