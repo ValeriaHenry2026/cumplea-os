@@ -9,7 +9,7 @@
     <meta property="og:description" content="Tengo algo especial para ti ✨">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Montserrat:wght@300;400;500;600&family=Patrick+Hand&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/epic.css">
 </head>
@@ -28,7 +28,7 @@
     <div id="welcome-screen">
         <canvas id="particle-canvas"></canvas>
         <div class="welcome-content glass-card pulse-glow">
-            <p class="fade-text">Preparé algo especial para celebrar tus 20...</p>
+            <p class="fade-text">Hace 20 vueltas al sol nacio la razón de mi alegria</p>
             <h1 class="welcome-name fade-text delay-1">Valeria ♡</h1>
             <button id="open-gift-btn" class="elegant-btn fade-text delay-2">Comenzar la experiencia ✨</button>
             <p class="fade-text delay-2" style="margin-top:18px;font-size:.75rem;color:var(--text-light)">7 meses al lado de mi bonita <3</p>
@@ -151,7 +151,7 @@
 
         <!-- SORPRESA FINAL -->
         <section id="surprise-section" class="observe">
-            <button id="surprise-btn" class="elegant-btn pulse-btn">Hay una última sorpresa...</button>
+            <button id="surprise-btn" class="elegant-btn pulse-btn">y para finalizar...</button>
             
             <div id="final-message" class="hidden-element glass-card gold-border">
                 <h2 class="script-title">Feliz cumpleaños, Vale ♡</h2>
@@ -163,7 +163,34 @@
                 </div>
             </div>
         </section>
+
+        <!-- GALAXIA -->
+        <section id="galaxy-section" class="observe">
+            <div class="bg" aria-hidden="true">
+                <div class="bokeh" id="bokeh"></div>
+                <div class="vignette"></div>
+            </div>
+
+            <div class="stage" id="stage">
+                <div id="gl"></div>
+                <h1 id="title" class="title">Feliz cumpleaños amor <span class="hb">♥</span></h1>
+
+                <div class="intro" id="intro" role="button" tabindex="0" aria-label="Toca para empezar">
+                    <div class="intro-core">
+                        <div class="rings"><span></span><span></span><span></span></div>
+                        <div class="intro-heart">♥</div>
+                        <div class="hand">👆</div>
+                    </div>
+                    <p class="tap-text">Toca para empezar</p>
+                </div>
+
+                <div id="flash" class="flash"></div>
+                <p id="hint" class="hint">Arrastra para mirar alrededor ♥</p>
+                <button id="sound" class="sound" aria-label="Sonido" title="Sonido">🔊</button>
+            </div>
+        </section>
     </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/epic.js"></script>
     𝖍𝖊𝖓𝖗𝖞 ©

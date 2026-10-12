@@ -153,3 +153,155 @@ section {
 
 .particle-confetti { position: fixed; pointer-events: none; z-index: 9999; border-radius: 50%; animation: fall linear forwards; }
 @keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
+#galaxy-section {
+  position: relative;
+  isolation: isolate;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 40px 12px;
+  overflow: hidden;
+  background: #08051a;
+  color: #fff;
+  font-family: 'Playfair Display', Georgia, serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#galaxy-section .bg { position: absolute; inset: 0; z-index: 0; background: radial-gradient(ellipse at 50% 40%, #20205a 0%, #100b2b 55%, #050817 100%); }
+#galaxy-section .bokeh { position: absolute; inset: 0; overflow: hidden; }
+#galaxy-section .bokeh span {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  font-size: var(--s);
+  color: rgba(75, 240, 230, .55);
+  filter: blur(var(--b));
+  line-height: 1;
+  animation: drift var(--d) ease-in-out infinite alternate;
+}
+@keyframes drift {
+  to { transform: translate(var(--dx), var(--dy)) scale(1.18); }
+}
+#galaxy-section .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, .65) 100%); }
+
+#galaxy-section .stage {
+  position: relative;
+  z-index: 1;
+  width: min(94vw, 620px);
+  height: min(92vh, 780px);
+  height: min(92dvh, 780px);
+  border-radius: 30px;
+  overflow: hidden;
+  background: #050817;
+  box-shadow: 0 0 0 1px rgba(95, 235, 230, .2), 0 0 70px rgba(130, 75, 255, .3);
+}
+#galaxy-section #gl, #galaxy-section #gl canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; display: block; touch-action: none; }
+
+/* ============ TÍTULO ============ */
+#galaxy-section .title {
+  position: absolute;
+  top: 4.5%;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: clamp(18px, 4.8vw, 27px);
+  font-weight: 700;
+  letter-spacing: .01em;
+  color: #c5a3ff;
+  text-shadow: 0 0 14px rgba(165, 120, 255, .75), 0 0 34px rgba(66, 235, 225, .4);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 1.8s ease, transform 1.8s ease;
+  pointer-events: none;
+  z-index: 3;
+}
+#galaxy-section .title.show { opacity: 1; transform: none; }
+#galaxy-section .hb { display: inline-block; animation: beat 1.3s ease-in-out infinite; }
+
+/* ============ INTRO ============ */
+#galaxy-section .intro {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px;
+  min-height: 0; max-width: none; margin: 0; padding: 0;
+  background: radial-gradient(circle at 50% 46%, #26205c 0%, #100d30 50%, #050817 100%);
+  cursor: pointer;
+  outline: none;
+  transition: opacity .6s ease, visibility .6s;
+}
+#galaxy-section .intro.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+
+#galaxy-section .intro-core { position: relative; width: 190px; height: 190px; display: grid; place-items: center; }
+#galaxy-section .rings span {
+  position: absolute; top: 50%; left: 50%;
+  border: 1px solid rgba(85, 235, 225, .5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ringPulse 3.2s ease-out infinite;
+}
+#galaxy-section .rings span:nth-child(1) { width: 80px;  height: 80px; }
+#galaxy-section .rings span:nth-child(2) { width: 120px; height: 120px; animation-delay: .8s; }
+#galaxy-section .rings span:nth-child(3) { width: 165px; height: 165px; animation-delay: 1.6s; }
+
+#galaxy-section .intro-heart {
+  font-size: 40px; line-height: 1;
+  color: #a66bff;
+  text-shadow: 0 0 18px rgba(166, 107, 255, .95), 0 0 40px rgba(111, 70, 220, .65);
+  animation: beat 1.3s ease-in-out infinite;
+}
+#galaxy-section .hand {
+  position: absolute; left: 54%; top: 52%;
+  font-size: 44px; line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .6));
+  animation: tap 1.8s ease-in-out infinite;
+}
+#galaxy-section .tap-text {
+  font-size: 11px; letter-spacing: .38em; text-transform: uppercase;
+  color: rgba(185, 245, 240, .7);
+}
+
+/* ============ EXTRAS ============ */
+#galaxy-section .flash {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle at center, #fff 0%, #a9fff8 45%, #8c5cff 100%);
+}
+#galaxy-section .hint {
+  position: absolute; left: 0; right: 0; bottom: 16px; z-index: 3;
+  text-align: center; font-size: 12px; letter-spacing: .12em;
+  color: rgba(190, 245, 245, .8);
+  opacity: 0; transition: opacity 1.2s ease; pointer-events: none;
+}
+#galaxy-section .hint.show { opacity: 1; }
+
+#galaxy-section .sound {
+  position: absolute; right: 14px; bottom: 14px; z-index: 6;
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid rgba(105, 235, 230, .6);
+  background: rgba(0, 0, 0, .45);
+  color: #fff; font-size: 16px; cursor: pointer;
+  display: none; place-items: center;
+  backdrop-filter: blur(6px);
+}
+#galaxy-section .sound.on { display: grid; }
+
+/* ============ ANIMACIONES ============ */
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.22); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.14); }
+  70% { transform: scale(1); }
+}
+@keyframes ringPulse {
+  0%   { opacity: 0;  transform: translate(-50%, -50%) scale(.7); }
+  25%  { opacity: .9; }
+  100% { opacity: 0;  transform: translate(-50%, -50%) scale(1.25); }
+}
+@keyframes tap {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  45%      { transform: translate(-4px, -6px) scale(1); }
+  60%      { transform: translate(0, 2px) scale(.92); }
+}
+
+@media (max-width: 520px) {
+  #galaxy-section .stage { width: 96vw; border-radius: 24px; }
+}

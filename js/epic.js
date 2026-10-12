@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 const CFG={inicio:new Date('2026-03-21T00:00:00')};
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],R=(a,b)=>a+Math.random()*(b-a);
-const COL=['#35CFC4','#BDF5F0','#D9B96E','#fff','#168F8A'],FC=['#35CFC4','#168F8A','#D9B96E','#ff6fa5','#8f7bff'];
+const COL=['#35CFC4','#BDF5F0','#D9B96E','#fff','#168F8A'],FC=['#35CFC4','#168F8A','#D9B96E','#00fff7','#8f7bff'];
 
 /* canvas: corazones flotantes + estela + fuegos artificiales */
 const fit=c=>{const d=Math.min(devicePixelRatio||1,2);c.width=innerWidth*d;c.height=innerHeight*d;c.getContext('2d').setTransform(d,0,0,d,0,0)};
