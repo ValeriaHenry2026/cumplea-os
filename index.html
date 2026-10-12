@@ -97,14 +97,18 @@
         <!-- GALERÍA (Se revela tras el juego) -->
         <section id="gallery-section" class="observe blur-locked">
             <h2 class="script-title">Nuestros recuerdos</h2>
-            <p class="subtitle">Desliza para ver más ♡</p>
+            <p class="subtitle">Desliza o usa las flechas para ver más ♡</p>
             <div class="carousel" id="photo-carousel"></div>
+            <div class="carousel-controls" aria-label="Controles de la galería">
+                <button class="carousel-arrow" id="gallery-prev" type="button" aria-label="Ver foto anterior">‹</button>
+                <button class="carousel-arrow" id="gallery-next" type="button" aria-label="Ver foto siguiente">›</button>
+            </div>
         </section>
 
         <!-- TIEMPO JUNTOS -->
         <section id="time-section" class="observe">
             <h2 class="script-title">Nuestro tiempo juntos</h2>
-            <p class="subtitle">Cada segundo contigo cuenta ♡</p>
+            <p class="subtitle">Cada segundo con vos cuenta ♡</p>
             <div class="time-grid" id="time-grid">
                 <div class="time-box glass-card"><b>0</b><small>días</small></div>
                 <div class="time-box glass-card"><b>0</b><small>horas</small></div>
@@ -151,7 +155,7 @@
 
         <!-- SORPRESA FINAL -->
         <section id="surprise-section" class="observe">
-            <button id="surprise-btn" class="elegant-btn pulse-btn">y para finalizar...</button>
+            <button id="surprise-btn" class="elegant-btn pulse-btn">descubre la carta...</button>
             
             <div id="final-message" class="hidden-element glass-card gold-border">
                 <h2 class="script-title">Feliz cumpleaños, Vale ♡</h2>
@@ -160,6 +164,7 @@
                     <p>El capítulo 20 acaba de comenzar...</p>
                     <p>Y deseo que esté lleno de sueños cumplidos, bendiciones, aventuras y muchos momentos juntos.</p>
                     <p class="signature">Con todo mi amor, Henry ♡</p>
+                    <p>desliza hacia abajo para finalizar</p>
                 </div>
             </div>
         </section>
@@ -171,9 +176,15 @@
                 <div class="vignette"></div>
             </div>
 
+            <div class="galaxy-heading">
+                <p class="galaxy-eyebrow">POR ULTIMO</p>
+                <h2>Nuestro pequeño universo</h2>
+                <p>Un viaje entre estrellas, hecho para vos ♡</p>
+            </div>
+
             <div class="stage" id="stage">
                 <div id="gl"></div>
-                <h1 id="title" class="title">Feliz cumpleaños amor <span class="hb">♥</span></h1>
+                <h1 id="title" class="title">Feliz cumpleaños mi muñequita <span class="hb">♥</span></h1>
 
                 <div class="intro" id="intro" role="button" tabindex="0" aria-label="Toca para empezar">
                     <div class="intro-core">
