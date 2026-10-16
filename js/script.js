@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { titulo: "Para cuando dudes de ti", mensaje: "Mírate con mis ojos. Eres increíble y capaz de lograr todo. Yo creo en ti." },
         { titulo: "Para cuando no estemos cerca", mensaje: "Cierra los ojos y recuerda mi voz. Mi corazón está contigo." },
         { titulo: "Para cuando tengas un mal día", mensaje: "Respira profundo. Dios tiene el control y yo estoy aquí para escucharte. Todo estará bien." },
-        { titulo: "Para recordar el propósito", mensaje: "Dios no se equivoca. El lugar donde estás es parte de Su plan. Confía en Su tiempo. ✝" }
+        { titulo: "Para recordar el propósito", mensaje: "Dios no se equivoca. El lugar donde estás es parte de Su plan. Confía en Su tiempo. ♡" }
     ];
 
     const coloresParticulas = ['#35CFC4', '#BDF5F0', '#D9B96E', '#FFFFFF'];
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
         requestAnimationFrame(animateParticles);
     }
     initParticles(); animateParticles();
-
+    
     // --- 3. APERTURA Y MÚSICA ---
     const welcomeScreen = document.getElementById('welcome-screen');
     const mainContent = document.getElementById('main-content');
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- 5. MINIJUEGO 2: TABLERO DE MEMORIA ---
-    const memorySymbols = ['🌷', '💍', '✝️', '✈️'];
+    const memorySymbols = ['🌷', '💍', '🕊️', '✈️'];
     let gameCards = [...memorySymbols, ...memorySymbols]; // 4 pares (8 cartas)
     gameCards.sort(() => 0.5 - Math.random()); // Mezclar
     
@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 500);
         }
     }
-
+    
     function unflipCards() {
         lockBoard = true;
         setTimeout(() => {

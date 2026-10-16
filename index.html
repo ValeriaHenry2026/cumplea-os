@@ -60,21 +60,33 @@
             <p class="subtitle">Toca la tarjeta para descubrir tu mensaje ♡</p>
             <div class="scratch-container glass-card">
                 <!-- Mensaje oculto -->
-                <div class="scratch-secret" aria-hidden="true">
+                <div class="scratch-secret" aria-hidden="true" aria-live="polite">
                     <h3 class="script-title small">Vale,</h3>
                     <p>Eres la coincidencia más bonita de mi vida y mi bendición más grande. Te amo.</p>
                     <p class="signature">- Henry ♡</p>
                 </div>
-                <button id="scratch-pad" class="scratch-cover" type="button" aria-label="Toca para descubrir tu mensaje">
+                <button id="scratch-pad" class="scratch-cover" type="button" aria-label="Toca para descubrir tu mensaje" aria-expanded="false">
                     <span>Toca aquí ♡</span>
                 </button>
             </div>
         </section>
 
+        <!-- ANIMACIÓN DE DOS ALMAS -->
+        <section id="souls-section" class="observe">
+            <h2 class="script-title">Dos almas, un solo latido</h2>
+            <p class="subtitle">Una historia de amor que siempre encuentra el camino ♡</p>
+            <iframe
+                id="souls-frame"
+                src="almas-web/almas/index.html"
+                title="Animación de dos almas que se encuentran y laten al mismo ritmo"
+                loading="lazy">
+            </iframe>
+        </section>
+
         <!-- SECCIÓN CRISTIANA -->
         <section id="faith-section" class="observe">
             <div class="faith-container celestial-bg glass-card">
-                <div class="cross-icon">💎</div>
+                <div class="faith-icon">💎</div>
                 <h2 class="script-title">Una bendición para tu nuevo año</h2>
                 <div class="bible-verse">
                     <p>"Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis."</p>
@@ -129,6 +141,19 @@
                     <div class="modal-icon">♡</div>
                     <p id="reason-text"></p>
                 </div>
+            </div>
+        </section>
+
+        <!-- TULIPÁN -->
+        <section id="tulip-section" class="observe">
+            <h2 class="script-title">Un tulipán para ti ♡</h2>
+            <p class="subtitle">Un detalle que florece con todo mi amor</p>
+            <button id="tulip-start" class="elegant-btn" type="button">Ver florecer el tulipán</button>
+            <div id="tulip-stage" aria-label="Animación de un tulipán floreciendo">
+                <div id="tulip-gl"></div>
+                <div class="vignette" aria-hidden="true"></div>
+                <h3 id="msg" class="msg" aria-live="polite"></h3>
+                <p id="replay" class="replay">toca el boton para verlo de nuevo</p>
             </div>
         </section>
 
@@ -204,6 +229,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/epic.js"></script>
+    <script src="tulipan-web/tulipan/js/tulipan.js"></script>
     𝖍𝖊𝖓𝖗𝖞 ©
 </body>
 </html>
