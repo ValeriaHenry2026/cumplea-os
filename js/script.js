@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     // --- 1. CONFIGURACIÓN ---
     const fotos = [
         { src: "img/cupidolyn.png", caption: "Uno de mis días favoritos contigo ♡" },
@@ -310,13 +310,23 @@ const CONFIG = {
     'Mi lugar favorito eres tú'
   ],
 
-  // Tus propias imágenes (PNG con fondo transparente funcionan mejor).
-  // Ejemplo: ['img/sticker1.png', 'img/sticker2.png']
-  images: [],
+  // Fotos que flotan entre las frases y los stickers de la galaxia.
+  images: [
+    'img/img1.jpeg',
+    'img/img2.jpeg',
+    'img/img3.jpeg',
+    'img/img4.jpeg',
+    'img/img5.jpeg',
+    'img/img6.jpeg',
+    'img/img7.jpeg',
+    'img/img8.jpeg',
+    'img/img9.jpeg',
+    'img/img10.jpeg',
+    'img/img11.jpeg'
+  ],
 
-  // Cuántas veces aparece cada frase / sticker en el escenario
+  // Cuántas veces aparece cada frase en el escenario
   phraseCopies: 2,
-  stickerCopies: 4,
 
   // Duración (segundos) del recorrido completo de la cámara antes de repetirse
   loopSeconds: 36
@@ -623,6 +633,7 @@ const CONFIG = {
   scene.add(floaters);
   const sprites = [];
   let spot = 0;
+  let photoSpot = 0;
 
   function nextSpot() {
     const i = spot++;
@@ -631,13 +642,21 @@ const CONFIG = {
     return [Math.cos(a) * rad, Math.sin(a) * rad];
   }
 
-  function addSprite(tex, aspect, height, y, kind) {
+  function nextPhotoSpot() {
+    const i = photoSpot++;
+    const a = i * 2.39996;
+    const rad = 3.2 + rand() * 2.2;
+    return [Math.cos(a) * rad, .65 + rand() * 1.2, Math.sin(a) * rad];
+  }
+
+  function addSprite(tex, aspect, height, y, kind, position = null) {
     const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 0 });
     const s = new THREE.Sprite(mat);
-    const [x, z] = nextSpot();
+    const [x, z] = position ? [position[0], position[2]] : nextSpot();
+    const spriteY = position ? position[1] : y;
     s.scale.set(height * aspect, height, 1);
-    s.position.set(x, y, z);
-    s.userData = { base: y, ph: rand() * 6.28, amp: kind === 'text' ? .05 + rand() * .12 : .03 + rand() * .05, kind };
+    s.position.set(x, spriteY, z);
+    s.userData = { base: spriteY, ph: rand() * 6.28, amp: kind === 'text' ? .05 + rand() * .12 : .03 + rand() * .05, kind };
     floaters.add(s);
     sprites.push(s);
   }
@@ -658,56 +677,6 @@ const CONFIG = {
     return { tex: t, aspect: w / h };
   }
 
-  /* Stickers kawaii dibujados con canvas (puedes añadir tus propias imágenes en CONFIG.images) */
-  function drawFace(g, y, s) {
-    g.shadowBlur = 0; g.shadowColor = 'transparent';
-    g.fillStyle = '#43128c';
-    [-24, 24].forEach((x) => { g.beginPath(); g.ellipse(x * s, y, 6 * s, 9 * s, 0, 0, 6.2832); g.fill(); });
-    g.strokeStyle = '#28164f'; g.lineWidth = 4 * s; g.lineCap = 'round';
-    g.beginPath(); g.arc(0, y + 8 * s, 8 * s, .15 * Math.PI, .85 * Math.PI); g.stroke();
-    g.fillStyle = 'rgba(70, 240, 225, 0.5)';
-    [-42, 42].forEach((x) => { g.beginPath(); g.ellipse(x * s, y + 12 * s, 9 * s, 6 * s, 0, 0, 6.2832); g.fill(); });
-  }
-  function stickerTexture(kind) {
-    return canvasTex(256, 256, (g) => {
-      g.translate(128, 134); g.lineJoin = 'round'; g.lineCap = 'round';
-      g.beginPath();
-      let fill = '#55eee5';
-      if (kind === 'heart') {
-        g.moveTo(0, 78); g.bezierCurveTo(-120, 0, -70, -90, 0, -38); g.bezierCurveTo(70, -90, 120, 0, 0, 78); g.closePath();
-      } else if (kind === 'star') {
-        for (let i = 0; i < 10; i++) {
-          const r = i % 2 ? 40 : 90, a = -Math.PI / 2 + i * Math.PI / 5;
-          g[i ? 'lineTo' : 'moveTo'](Math.cos(a) * r, Math.sin(a) * r);
-        }
-        g.closePath(); fill = '#9a72ff';
-      } else if (kind === 'bow') {
-        g.moveTo(0, 0); g.quadraticCurveTo(-60, -85, -100, -22); g.quadraticCurveTo(-80, 62, 0, 0);
-        g.moveTo(0, 0); g.quadraticCurveTo(60, -85, 100, -22); g.quadraticCurveTo(80, 62, 0, 0);
-        fill = '#8752e8';
-      } else { // flower
-        for (let i = 0; i < 6; i++) {
-          const a = i * Math.PI / 3, x = Math.cos(a) * 46, y = Math.sin(a) * 46;
-          g.moveTo(x + 36, y); g.arc(x, y, 36, 0, 6.2832);
-        }
-        fill = '#ae91ff';
-      }
-      g.shadowColor = 'rgba(80, 235, 225, 0.9)'; g.shadowBlur = 20;
-      g.strokeStyle = '#fff'; g.lineWidth = 16; g.stroke();
-      g.shadowBlur = 0; g.fillStyle = fill; g.fill();
-
-      if (kind === 'heart') drawFace(g, 4, 1);
-      else if (kind === 'star') drawFace(g, 8, 1);
-      else if (kind === 'bow') {
-        g.beginPath(); g.arc(0, 0, 22, 0, 6.2832); g.fillStyle = '#8050d8'; g.fill();
-        g.strokeStyle = '#fff'; g.lineWidth = 5; g.stroke();
-      } else {
-        g.beginPath(); g.arc(0, 0, 34, 0, 6.2832); g.fillStyle = '#62e9df'; g.fill();
-        drawFace(g, -2, .7);
-      }
-    });
-  }
-
   function buildFloaters() {
     // frases
     CONFIG.phrases.forEach((txt) => {
@@ -718,24 +687,17 @@ const CONFIG = {
         addSprite(tex, aspect, h, .2 + rand() * 1.7, 'text');
       }
     });
-    // stickers dibujados
-    ['heart', 'star', 'bow', 'flower'].forEach((k) => {
-      const tex = stickerTexture(k);
-      for (let c = 0; c < CONFIG.stickerCopies; c++) {
-        const h = .8 + rand() * .6;
-        addSprite(tex, 1, h, h / 2 + .03, 'sticker');
-      }
-    });
-    // imágenes propias (opcional)
+    const photoLoader = new THREE.TextureLoader();
+    photoLoader.setCrossOrigin(undefined);
     CONFIG.images.forEach((src) => {
-      new THREE.TextureLoader().load(src, (tex) => {
-        tex.minFilter = THREE.LinearFilter; tex.generateMipmaps = false;
+      photoLoader.load(new URL(src, document.baseURI).href, (tex) => {
+        tex.minFilter = THREE.LinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.generateMipmaps = false;
         const aspect = tex.image.width / tex.image.height;
-        for (let c = 0; c < CONFIG.stickerCopies; c++) {
-          const h = .9 + rand() * .6;
-          addSprite(tex, aspect, h, h / 2 + .03, 'sticker');
-        }
-      }, undefined, () => console.warn('No se pudo cargar la imagen:', src));
+        const height = .8 + rand() * .25;
+        addSprite(tex, aspect, height, 0, 'photo', nextPhotoSpot());
+      }, undefined, (error) => console.error('No se pudo cargar la foto de la galaxia:', src, error));
     });
   }
 
@@ -894,7 +856,7 @@ const CONFIG = {
       const s = sprites[i], u = s.userData;
       s.position.y = u.base + Math.sin(T * .9 + u.ph) * u.amp;
       s.getWorldPosition(tmp);
-      const near = smooth(.5, 1.8, tmp.distanceTo(camera.position));
+      const near = u.kind === 'photo' ? 1 : smooth(.5, 1.8, tmp.distanceTo(camera.position));
       s.material.opacity = (u.kind === 'text' ? .97 : 1) * appear * near;
     }
 
