@@ -957,7 +957,7 @@ const CONFIG = {
 /* ============ CONFIGURA AQUÍ ============ */
 const GATE_CFG = {
   fechas: ['21/03/2026'],                 // fecha(s) válidas, formato DD/MM/AAAA
-  voz: 'audio/mensaje-henry.mp3',         // tu nota de voz (usa mp3 o m4a)
+  voz: 'audio/jijijja.m4a',         // tu nota de voz
   sobreVoz: /no estemos cerca/i           // título del sobre que lleva tu voz
 };
 
@@ -981,10 +981,15 @@ const GATE_CFG = {
         <defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0bd"/><stop offset=".5" stop-color="#D9B96E"/><stop offset="1" stop-color="#a8832f"/></linearGradient></defs>
         <path class="shackle" d="M36 68V50a24 24 0 0 1 48 0v18" fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round"/>
         <rect x="18" y="66" width="84" height="66" rx="16" fill="url(#gold)"/>
-        <text x="60" y="110" text-anchor="middle" font-size="36" fill="#7a5a14">♥</text>
+        <g fill="none" stroke="#7a5a14" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5">
+          <path d="M60 113c0-7 0-13 1-19"/>
+          <path d="M59 107c-7 0-11-4-13-9 6 0 11 2 14 7"/>
+          <path d="M61 110c6-1 10-4 12-9-6 0-10 2-12 7"/>
+        </g>
+        <path d="M60 97c-5-2-9-6-8-13 4 1 7 3 8 7 2-5 6-8 11-8 1 7-3 12-11 14Z" fill="#7a5a14"/>
       </svg>
     </div>
-    <h1 class="g-title">para Valeria</h1>
+    <h1 class="g-title">De Henry para <span class="g-recipient">Valeria<span class="g-heart" aria-hidden="true">♡</span></span></h1>
     <p class="g-sub">Para entrar, dime...<b>¿Cuándo empezó nuestra historia?</b></p>
     <div class="g-date">
       <input inputmode="numeric" maxlength="2" placeholder="DD" aria-label="Día"><span>/</span>
@@ -1043,7 +1048,7 @@ const GATE_CFG = {
   const bad = (txt) => {
     n++; card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); V([120, 60, 120]);
     msg.className = 'g-msg err';
-    msg.textContent = txt || (n >= 4 ? `Pista: fue el ${D} de ${MES[M - 1]} ♡` : n >= 2 ? `Pista: fue en ${MES[M - 1]} ♡` : 'Mmm... esa no es 🥺 piénsalo con el corazón');
+    msg.textContent = txt || (n >= 4 ? `Pista: fue el ${D} de ${MES[M - 1]} ♡` : n >= 2 ? `Pista: fue en ${MES[M - 1]} ♡` : 'esa no es amor 😡😡😡');
     ins.forEach(i => i.value = ''); ins[0].focus();
   };
   const check = () => {
