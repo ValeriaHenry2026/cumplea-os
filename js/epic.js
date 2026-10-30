@@ -6,7 +6,7 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],R=(
 const COL=['#35CFC4','#BDF5F0','#D9B96E','#fff','#168F8A'],FC=['#35CFC4','#168F8A','#D9B96E','#00fff7','#8f7bff'];
 
 /* canvas: corazones flotantes + estela + fuegos artificiales */
-const fit=c=>{const d=Math.min(devicePixelRatio||1,2);c.width=innerWidth*d;c.height=innerHeight*d;c.getContext('2d').setTransform(d,0,0,d,0,0)};
+const fit=c=>{const d=Math.min(devicePixelRatio||1,matchMedia('(max-width: 700px)').matches?1.5:2);c.width=innerWidth*d;c.height=innerHeight*d;c.getContext('2d').setTransform(d,0,0,d,0,0)};
 const mk=id=>{const c=document.createElement('canvas');c.id=id;document.body.appendChild(c);fit(c);return c};
 const fx=mk('fx'),fw=mk('fw'),x=fx.getContext('2d'),w=fw.getContext('2d');
 addEventListener('resize',()=>{fit(fx);fit(fw)});
@@ -15,20 +15,28 @@ const fl=r=>({x:R(0,innerWidth),y:r?innerHeight+20:R(0,innerHeight),vy:-R(.2,.7)
 for(let i=0;i<26;i++)P.push(fl());
 const spark=(px,py,n=1,sp=2)=>{for(let i=0;i<n;i++){const a=R(0,6.28),v=R(.3,sp);S.push({x:px,y:py,vx:Math.cos(a)*v,vy:Math.sin(a)*v-.5,l:1,s:R(8,16),c:G[Math.random()*4|0],col:FC[Math.random()*5|0]})}};
 const draw=(a,col,s,c,px,py)=>{x.globalAlpha=a;x.fillStyle=col;x.font=s+'px serif';x.fillText(c,px,py)};
-const loop=t=>{x.clearRect(0,0,innerWidth,innerHeight);
- P.forEach(p=>{p.y+=p.vy;p.x+=Math.sin(t/1500+p.ph)*.4;if(p.y<-30)Object.assign(p,fl(1));draw(p.a,p.col,p.s,p.c,p.x,p.y)});
- for(let i=S.length-1;i>=0;i--){const s=S[i];s.x+=s.vx;s.y+=s.vy;s.vy+=.04;s.l-=.02;if(s.l<=0){S.splice(i,1);continue}draw(s.l,s.col,s.s,s.c,s.x,s.y)}
- x.globalAlpha=1;requestAnimationFrame(loop)};requestAnimationFrame(loop);
+let heartFrame=0,lastHeartFrame=0,scrollTimer=0,scrolling=false;
+const loop=t=>{heartFrame=0;if(document.hidden||scrolling)return;if(t-lastHeartFrame<1000/30){heartFrame=requestAnimationFrame(loop);return}const frameScale=Math.min((t-lastHeartFrame)/(1000/60),2);lastHeartFrame=t;x.clearRect(0,0,innerWidth,innerHeight);
+ P.forEach(p=>{p.y+=p.vy*frameScale;p.x+=Math.sin(t/1500+p.ph)*.4*frameScale;if(p.y<-30)Object.assign(p,fl(1));draw(p.a,p.col,p.s,p.c,p.x,p.y)});
+ for(let i=S.length-1;i>=0;i--){const s=S[i];s.x+=s.vx*frameScale;s.y+=s.vy*frameScale;s.vy+=.04*frameScale;s.l-=.02*frameScale;if(s.l<=0){S.splice(i,1);continue}draw(s.l,s.col,s.s,s.c,s.x,s.y)}
+ x.globalAlpha=1;heartFrame=requestAnimationFrame(loop)};
+const startHearts=()=>{if(!heartFrame&&!document.hidden&&!scrolling)heartFrame=requestAnimationFrame(loop)};
+const pauseHearts=()=>{if(heartFrame)cancelAnimationFrame(heartFrame);heartFrame=0};
+startHearts();
+addEventListener('scroll',()=>{scrolling=true;pauseHearts();clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>{scrolling=false;startHearts()},180)},{passive:true});
 let lt=0;addEventListener('pointermove',e=>{const n=Date.now();if(n-lt>45){lt=n;spark(e.clientX,e.clientY,1,1)}});
 addEventListener('click',e=>spark(e.clientX,e.clientY,10,3));
 
 const boom=(bx,by)=>{const c=FC[Math.random()*5|0];for(let i=0;i<70;i++){const a=i/70*6.28,v=R(1,5);F.push({x:bx,y:by,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c:Math.random()<.3?FC[2]:c})}};
-const shoot=()=>K.push({x:R(.15,.85)*innerWidth,y:innerHeight,t:R(.15,.5)*innerHeight});
+let fireworksFrame=0;
+const startFireworks=()=>{if(!fireworksFrame&&!document.hidden&&(K.length||F.length))fireworksFrame=requestAnimationFrame(fwl)};
+const shoot=()=>{K.push({x:R(.15,.85)*innerWidth,y:innerHeight,t:R(.15,.5)*innerHeight});startFireworks()};
 const show=(n=6,gap=450)=>{for(let i=0;i<n;i++)setTimeout(shoot,i*gap)};
-const fwl=()=>{w.globalCompositeOperation='destination-out';w.fillStyle='rgba(0,0,0,.18)';w.fillRect(0,0,innerWidth,innerHeight);w.globalCompositeOperation='source-over';
+const fwl=()=>{fireworksFrame=0;w.globalCompositeOperation='destination-out';w.fillStyle='rgba(0,0,0,.18)';w.fillRect(0,0,innerWidth,innerHeight);w.globalCompositeOperation='source-over';
  for(let i=K.length-1;i>=0;i--){const k=K[i];k.y-=10;w.fillStyle='#D9B96E';w.fillRect(k.x,k.y,3,10);if(k.y<=k.t){boom(k.x,k.y);K.splice(i,1)}}
  for(let i=F.length-1;i>=0;i--){const f=F[i];f.x+=f.vx;f.y+=f.vy;f.vx*=.97;f.vy=f.vy*.97+.05;f.l-=.014;if(f.l<=0){F.splice(i,1);continue}w.globalAlpha=f.l;w.fillStyle=f.c;w.beginPath();w.arc(f.x,f.y,2.4,0,6.28);w.fill()}
- w.globalAlpha=1;requestAnimationFrame(fwl)};fwl();
+ w.globalAlpha=1;if(K.length||F.length)fireworksFrame=requestAnimationFrame(fwl);else w.clearRect(0,0,innerWidth,innerHeight)};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseHearts();else{startHearts();startFireworks()}});
 
 /* typewriter sin saltos de layout */
 const pre=e=>{e.dataset.t=e.textContent.trim();e.innerHTML='<span></span><span style="visibility:hidden"></span>';e.lastChild.textContent=e.dataset.t;return e};

@@ -53,15 +53,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     function initParticles() { for (let i = 0; i < 50; i++) particlesArray.push(new Particle()); }
+    let particlesFrame;
     function animateParticles() {
         ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
         for (let i = 0; i < particlesArray.length; i++) {
             particlesArray[i].update(); particlesArray[i].draw();
             if (particlesArray[i].size <= 0.2) { particlesArray.splice(i, 1); i--; particlesArray.push(new Particle()); }
         }
-        requestAnimationFrame(animateParticles);
+        particlesFrame = requestAnimationFrame(animateParticles);
     }
-    initParticles(); animateParticles();
+    initParticles(); particlesFrame = requestAnimationFrame(animateParticles);
     
     // --- 3. APERTURA Y MÚSICA ---
     const welcomeScreen = document.getElementById('welcome-screen');
@@ -92,6 +93,8 @@ document.addEventListener("DOMContentLoaded", () => {
     playMusic();
 
     document.getElementById('open-gift-btn').addEventListener('click', () => {
+        cancelAnimationFrame(particlesFrame);
+        ctxBg.clearRect(0, 0, canvasBg.width, canvasBg.height);
         playMusic();
         welcomeScreen.style.opacity = '0';
         setTimeout(() => {
@@ -119,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- 5. MINIJUEGO 2: TABLERO DE MEMORIA ---
-    const memorySymbols = ['🌷', '💍', '🕊️', '✈️'];
+    const memorySymbols = ['🌷', '🌛', '🌅', '🏍️'];
     let gameCards = [...memorySymbols, ...memorySymbols]; // 4 pares (8 cartas)
     gameCards.sort(() => 0.5 - Math.random()); // Mezclar
     
