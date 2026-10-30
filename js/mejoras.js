@@ -113,7 +113,7 @@
       if (!sec || !el) return;
       const it = { kind: 'frame', sec, el, ready: false, want: false, entered: false, done: false, v: 0 };
       Object.assign(it, makeRow(el));
-      it.rb.addEventListener('click', () => { centerOn(sec); startItem(it); });
+      it.rb.addEventListener('click', () => startItem(it));
       items.push(it);
     });
 
@@ -128,7 +128,7 @@
       items.push(it);
     }
 
-    // galaxia: solo se centra (arranca con su propio "Toca para empezar")
+    // La galaxia arranca con su propio "Toca para empezar", sin mover la página.
     const gSec = $('#galaxy-section');
     if (gSec) items.push({ kind: 'galaxy', sec: gSec, entered: false, v: 0 });
 
@@ -201,10 +201,6 @@
         if (best.kind !== 'galaxy') setTimeout(() => { if (best.entered) startItem(best); }, 700);
       }
     }
-
-    // la galaxia se centra también al tocar "Toca para empezar"
-    const intro = $('#intro');
-    if (intro && gSec) intro.addEventListener('pointerdown', () => centerOn(gSec), true);
 
     /* ---------------------------------------------------------------
        "Sigue bajando" flotante cuando se queda quieta un rato
