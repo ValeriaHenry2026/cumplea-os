@@ -1,0 +1,232 @@
+/* =====================================================================
+   MEJORAS · cargar DESPUÉS de style.css
+   ===================================================================== */
+
+/* ---------- 1. PANTALLAS QUE SÍ CABEN EN EL CELULAR ---------- */
+section { min-height: 100vh; min-height: 100dvh; }
+
+/* Las animaciones 3D ya no atrapan el dedo: el scroll siempre funciona */
+#souls-frame, #lock-frame { pointer-events: none; }
+#galaxy-section #gl canvas,
+#tulip-stage #tulip-gl canvas { touch-action: pan-y !important; }
+
+/* Título + animación + botones caben juntos en una sola pantalla */
+#souls-section, #lock-section, #tulip-section {
+    padding: 22px 16px 18px;
+    justify-content: center;
+}
+#souls-section .script-title, #lock-section .script-title, #tulip-section .script-title {
+    font-size: 2.3rem; line-height: 1.15; margin-bottom: 6px;
+}
+#souls-section .subtitle, #lock-section .subtitle, #tulip-section .subtitle {
+    margin-bottom: 14px; font-size: .85rem; line-height: 1.4;
+}
+#souls-frame, #lock-frame {
+    height: clamp(340px, calc(100vh - 300px), 640px);
+    height: clamp(340px, calc(100dvh - 300px), 640px);
+    min-height: 0;
+}
+#tulip-stage {
+    height: clamp(330px, calc(100vh - 300px), 620px);
+    height: clamp(330px, calc(100dvh - 300px), 620px);
+    min-height: 0;
+}
+#galaxy-section {
+    min-height: 100vh; min-height: 100dvh;
+    padding: 26px 12px 18px; gap: 12px; justify-content: center;
+}
+#galaxy-section .stage {
+    height: clamp(400px, calc(100vh - 215px), 660px);
+    height: clamp(400px, calc(100dvh - 215px), 660px);
+    min-height: 0;
+}
+#souls-section .scroll-cue, #lock-section .scroll-cue, #tulip-section .scroll-cue { display: none; }
+
+/* ---------- 2. BOTONES "VER OTRA VEZ" y "SIGUE BAJANDO" ---------- */
+.next-row {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: 10px; width: min(100%, 560px); min-height: 48px; margin-top: 14px;
+}
+.ghost-btn {
+    padding: 11px 18px; border-radius: 26px; font: 600 .8rem var(--font-body); cursor: pointer;
+    color: var(--turquesa-oscuro); background: rgba(255, 255, 255, .55);
+    border: 1px solid var(--aqua-claro); box-shadow: 0 4px 14px rgba(53, 207, 196, .15);
+    transition: transform .2s ease;
+}
+.ghost-btn:active { transform: scale(.94); }
+.next-btn {
+    padding: 12px 22px; border-radius: 26px; font: 700 .85rem var(--font-body); cursor: pointer;
+    color: #5c4412; border: 1px solid #fff;
+    background: linear-gradient(135deg, #f3dc9c, var(--dorado));
+    box-shadow: 0 6px 18px rgba(217, 185, 110, .5);
+    opacity: 0; visibility: hidden; transform: translateY(10px) scale(.9);
+    transition: opacity .6s ease, transform .6s cubic-bezier(.2, .9, .3, 1.3), visibility 0s linear .6s;
+}
+.next-btn span { display: inline-block; margin-left: 4px; }
+.next-row.done .next-btn {
+    opacity: 1; visibility: visible; transform: none; transition-delay: 0s;
+    animation: nextBob 1.9s ease-in-out .7s infinite;
+}
+.next-row.done .next-btn span { animation: arrowBob 1.2s ease-in-out infinite; }
+@keyframes nextBob { 0%, 100% { box-shadow: 0 6px 18px rgba(217, 185, 110, .45); } 50% { box-shadow: 0 8px 28px rgba(217, 185, 110, .95); } }
+@keyframes arrowBob { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(4px); } }
+
+/* aviso flotante si se queda quieta un rato */
+#next-hint {
+    position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); z-index: 998;
+    padding: 11px 20px; border-radius: 26px; font: 700 .8rem var(--font-body); cursor: pointer;
+    color: var(--turquesa-oscuro); border: 1px solid rgba(255, 255, 255, .9);
+    background: rgba(255, 255, 255, .82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: 0 8px 26px rgba(53, 207, 196, .35);
+    opacity: 0; pointer-events: none; transform: translate(-50%, 16px);
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2, .9, .3, 1.3);
+}
+#next-hint.show { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); animation: hintBob 1.8s ease-in-out .5s infinite; }
+#next-hint span { display: inline-block; margin-left: 4px; }
+@keyframes hintBob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
+
+/* ---------- 3. GALERÍA: ahora SE NOTA que está bloqueada ---------- */
+#gallery-section { position: relative; }
+#gallery-section:not(.unlocked) .carousel,
+#gallery-section:not(.unlocked) .carousel-controls,
+#gallery-section:not(.unlocked) .dots {
+    filter: blur(7px) saturate(.8); opacity: .5;
+}
+#gallery-section .carousel, #gallery-section .carousel-controls, #gallery-section .dots { transition: filter 1.2s ease, opacity 1.2s ease; }
+.lock-note {
+    display: none; position: absolute; left: 50%; top: 52%; z-index: 3; width: min(82%, 300px);
+    transform: translate(-50%, -50%); text-align: center; padding: 18px 16px; border-radius: 18px;
+    font-size: .85rem; font-weight: 600; line-height: 1.5; color: var(--turquesa-oscuro);
+    background: rgba(255, 255, 255, .85); border: 1px solid var(--dorado);
+    box-shadow: 0 8px 28px rgba(217, 185, 110, .35);
+    animation: float 3s ease-in-out infinite;
+}
+#gallery-section:not(.unlocked) .lock-note { display: block; }
+
+.dots { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
+.dots button {
+    width: 8px; height: 8px; padding: 0; border: 0; border-radius: 8px; cursor: pointer;
+    background: var(--aqua-claro); transition: width .3s ease, background .3s ease;
+}
+.dots button.on { width: 24px; background: linear-gradient(90deg, var(--turquesa), var(--dorado)); }
+
+/* ---------- 4. DECORACIÓN ---------- */
+/* progreso con corazón y degradado */
+#progress-bar {
+    height: 5px; background: linear-gradient(90deg, var(--turquesa), var(--dorado), var(--turquesa-oscuro));
+    box-shadow: 0 0 10px rgba(53, 207, 196, .6);
+}
+#progress-bar::after {
+    content: "♥"; position: absolute; right: -7px; top: 3px; font-size: 13px; line-height: 1;
+    color: var(--turquesa); text-shadow: 0 0 8px rgba(53, 207, 196, .9);
+}
+
+/* música: anillo que late */
+#music-btn.playing::after {
+    content: ""; position: absolute; inset: -6px; border-radius: 50%;
+    border: 2px solid rgba(53, 207, 196, .55); animation: ringOut 1.9s ease-out infinite;
+}
+@keyframes ringOut { from { transform: scale(.85); opacity: .9; } to { transform: scale(1.4); opacity: 0; } }
+
+/* etiquetas de capítulo */
+.chapter {
+    display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 6px;
+    font: 600 .66rem var(--font-body); letter-spacing: .34em; text-transform: uppercase; color: var(--dorado);
+    text-shadow: 0 1px 6px rgba(255, 255, 255, .9);
+}
+.chapter::before, .chapter::after { content: ""; width: 34px; height: 1px; background: linear-gradient(90deg, transparent, var(--dorado)); }
+.chapter::after { transform: scaleX(-1); }
+
+/* divisores con tulipán entre secciones (no ocupan espacio) */
+.divider { position: relative; z-index: 2; height: 0; pointer-events: none; }
+.divider > div {
+    position: absolute; left: 50%; top: 0; width: min(80vw, 320px); transform: translate(-50%, -50%);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.divider span { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(217, 185, 110, .85)); }
+.divider span:last-child { transform: scaleX(-1); }
+.divider i { font-style: normal; color: var(--dorado); font-size: .8rem; animation: twinkle 2.6s ease-in-out infinite; }
+.divider svg { filter: drop-shadow(0 2px 5px rgba(53, 207, 196, .4)); animation: float 4s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: .35; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+/* florituras en las esquinas de las tarjetas especiales */
+.welcome-content, .faith-container, .game-card, #final-message { position: relative; }
+.welcome-content::before, .faith-container::before, .game-card::before, #final-message::before,
+.welcome-content::after, .faith-container::after, .game-card::after, #final-message::after {
+    content: "✿"; position: absolute; font-size: 1.25rem; color: var(--dorado); opacity: .85;
+    text-shadow: 0 0 8px rgba(217, 185, 110, .6); animation: twinkle 3.2s ease-in-out infinite; pointer-events: none;
+}
+.welcome-content::before, .faith-container::before, .game-card::before, #final-message::before { top: 10px; left: 14px; }
+.welcome-content::after, .faith-container::after, .game-card::after, #final-message::after { bottom: 10px; right: 14px; animation-delay: 1.4s; }
+
+/* pétalos cayendo por detrás del contenido */
+#petals { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+body.no-scroll #petals { display: none; }
+#petals i {
+    position: absolute; left: var(--x); top: -6vh; width: var(--s); height: calc(var(--s) * 1.45);
+    background: var(--c); border-radius: 80% 0 80% 0; opacity: .5;
+    animation: petalFall var(--d) linear var(--dl) infinite; will-change: transform;
+}
+@keyframes petalFall {
+    0%   { transform: translate3d(0, -6vh, 0) rotate(0deg); }
+    50%  { transform: translate3d(var(--sw), 55vh, 0) rotate(200deg); }
+    100% { transform: translate3d(calc(var(--sw) * -.5), 112vh, 0) rotate(400deg); }
+}
+
+/* destellos que salen al tocar cosas especiales */
+.pop {
+    position: fixed; z-index: 9996; pointer-events: none; transform: translate(-50%, -50%);
+    animation: popUp 1.3s cubic-bezier(.15, .8, .3, 1) forwards; text-shadow: 0 0 8px currentColor;
+}
+@keyframes popUp {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(.4); }
+    to   { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--r)) scale(1.15); }
+}
+
+/* fotos: cinta + corazoncito pegado */
+.photo-card { position: relative; }
+.photo-card::after {
+    content: "♡"; position: absolute; right: -8px; top: -10px; width: 34px; height: 34px;
+    display: grid; place-items: center; border-radius: 50%; color: #fff; font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--turquesa), var(--turquesa-oscuro));
+    box-shadow: 0 4px 12px rgba(22, 143, 138, .4); transform: rotate(12deg);
+}
+
+/* memoria: cartas encontradas brillan */
+.memory-card.flipped .memory-card-back { border-color: var(--dorado); box-shadow: 0 0 14px rgba(217, 185, 110, .7); }
+
+/* sobres con sello dorado */
+.envelope { position: relative; box-shadow: 0 4px 14px rgba(53, 207, 196, .15); }
+.envelope:active { transform: scale(.98); }
+.envelope-title { padding: 0 26px; }
+.envelope::after {
+    content: "♡"; position: absolute; right: 12px; top: 12px; width: 26px; height: 26px; display: grid; place-items: center;
+    border-radius: 50%; font-size: .9rem; color: #6b4d0f; background: radial-gradient(circle at 35% 30%, #fff0bd, var(--dorado));
+    box-shadow: 0 2px 6px rgba(168, 131, 47, .45); transition: transform .5s ease;
+}
+.envelope.open::after { content: "✦"; transform: rotate(360deg) scale(1.1); }
+.envelope.open .envelope-msg { animation: envOpen .5s ease both; }
+@keyframes envOpen { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+
+/* 20 razones: contador */
+.reasons-meter { width: 100%; max-width: 350px; margin-top: 18px; text-align: center; }
+.reasons-meter .bar { height: 6px; border-radius: 6px; background: rgba(53, 207, 196, .2); overflow: hidden; }
+.reasons-meter .bar b { display: block; width: 0; height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--turquesa), var(--dorado)); transition: width .5s ease; }
+.reasons-meter p { margin-top: 8px; font-size: .8rem; font-weight: 600; letter-spacing: .06em; color: var(--turquesa-oscuro); }
+.reasons-meter.complete p { animation: pulseGlow 1.5s infinite alternate; }
+
+/* reloj: latido por segundo */
+.time-box b.tick { animation: tickBeat .5s ease; }
+@keyframes tickBeat { 0% { transform: scale(1.22); } 100% { transform: scale(1); } }
+
+/* marcos con brillo suave para las animaciones */
+#souls-frame, #lock-frame, #tulip-stage { animation: frameGlow 4s ease-in-out infinite; }
+@keyframes frameGlow {
+    0%, 100% { box-shadow: 0 14px 40px rgba(22, 143, 138, .18), 0 0 18px rgba(53, 207, 196, .12); }
+    50%      { box-shadow: 0 14px 44px rgba(22, 143, 138, .3), 0 0 34px rgba(217, 185, 110, .35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #petals, .pop { display: none; }
+    .divider i, .divider svg, .next-row.done .next-btn, #next-hint.show, #souls-frame, #lock-frame, #tulip-stage { animation: none; }
+}

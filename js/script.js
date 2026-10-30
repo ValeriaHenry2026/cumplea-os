@@ -252,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         finalMessage.classList.remove('hidden-element');
         finalMessage.classList.add('reveal-animation');
         lanzarConfeti(60);
-        setTimeout(() => finalMessage.scrollIntoView({ behavior: 'smooth' }), 200);
+        setTimeout(() => finalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
     });
 
     // Utilidades comunes (Observer de scroll y Confeti)
