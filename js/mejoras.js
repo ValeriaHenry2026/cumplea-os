@@ -1,6 +1,6 @@
 /* =====================================================================
    MEJORAS DE EXPERIENCIA (pensadas para celular)
-   1. Las animaciones se CENTRAN solas en pantalla y arrancan ahí.
+   1. Las animaciones arrancan al llegar sin interrumpir el scroll.
    2. Al terminar aparece "Sigue bajando ↓" + "↻ Ver otra vez".
    3. Aviso flotante "Sigue bajando" si la persona se queda quieta.
    4. Decoración: capítulos, divisores, pétalos, destellos, contadores…
@@ -87,7 +87,7 @@
     }
 
     /* ---------------------------------------------------------------
-       ANIMACIONES: centrar al llegar, arrancar ahí, "Sigue bajando"
+       ANIMACIONES: arrancar al llegar, "Sigue bajando"
        --------------------------------------------------------------- */
     const makeRow = (after, replayBtn) => {
       const row = document.createElement('div');
@@ -174,7 +174,7 @@
       if (d.type === 'done') markDone(it);
     });
 
-    /* detector de "se quedó quieto": ahí centramos y arrancamos */
+    /* Detecta cuándo una animación entra en pantalla para iniciarla. */
     let touching = false, idleT;
     const schedule = () => { clearTimeout(idleT); idleT = setTimeout(evaluate, 150); };
     addEventListener('touchstart', () => { touching = true; }, { passive: true });
@@ -198,7 +198,6 @@
       });
       if (best && bv >= .5 && !best.entered) {
         best.entered = true;
-        centerOn(best.sec);
         if (best.kind !== 'galaxy') setTimeout(() => { if (best.entered) startItem(best); }, 700);
       }
     }
@@ -318,19 +317,6 @@
         }, 60);
       });
     }
-
-    // Sobres: que el mensaje abierto siempre quede a la vista
-    document.addEventListener('click', (e) => {
-      const env = e.target.closest('.envelope');
-      if (!env) return;
-      setTimeout(() => {
-        if (!env.classList.contains('open')) return;
-        const r = env.getBoundingClientRect();
-        if (r.bottom > innerHeight - 24 || r.top < 70) {
-          scrollTo({ top: scrollY + r.top + r.height / 2 - innerHeight / 2, behavior });
-        }
-      }, 340);
-    });
 
     // Tarjeta secreta: lluvia de destellos al descubrirla
     const sp = $('#scratch-pad');
