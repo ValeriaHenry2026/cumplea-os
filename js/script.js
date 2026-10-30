@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     const razones = [
-        "Porque haces mis días mejores.", "Porque me desestresas.", "Por tu sonrisa que ilumina todo.",
+        "Porque haces mis días mejores.", "Por todo los momentos juntos.", "Por tu sonrisa que ilumina todo.",
         "Por cómo buscas a Dios.", "Por tu corazón noble.", "Por cómo me haces sentir.",
         "Porque puedo ser yo mismo.", "Por cada aventura juntos.", "Por tus locuras.",
         "Por tu risa contagiosa.", "Por tu inteligencia.", "Por la paz que me da abrazarte.",
@@ -339,6 +339,9 @@ const CONFIG = {
   const $ = (id) => document.getElementById(id);
   const stage = $('stage'), intro = $('intro'), titleEl = $('title');
   const flash = $('flash'), hint = $('hint'), soundBtn = $('sound'), bgm = $('bg-music');
+  const galaxyMusic = new Audio('audio/M.A.I.mp3');
+  galaxyMusic.loop = true;
+  galaxyMusic.preload = 'auto';
 
   if (typeof THREE === 'undefined') {
     intro.querySelector('.tap-text').textContent = 'No se pudo cargar Three.js';
@@ -872,20 +875,23 @@ const CONFIG = {
   }
 
   /* ------------------------------ Audio ------------------------------ */
-  bgm.volume = 0;
-  bgm.addEventListener('canplay', () => soundBtn.classList.add('on'));
+  galaxyMusic.volume = 0;
+  galaxyMusic.addEventListener('canplay', () => soundBtn.classList.add('on'));
   function startAudio() {
-    const p = bgm.play();
-    if (p && p.catch) p.catch(() => {});
+    if (!bgm.paused) bgm.pause();
+    const p = galaxyMusic.play();
+    if (p && p.catch) {
+      p.catch((error) => console.error('No se pudo reproducir audio/M.A.I.mp3:', error));
+    }
     let v = 0;
     const iv = setInterval(() => {
-      v = Math.min(v + .04, .85); bgm.volume = v;
+      v = Math.min(v + .04, .85); galaxyMusic.volume = v;
       if (v >= .85) clearInterval(iv);
     }, 150);
   }
   soundBtn.addEventListener('click', () => {
-    bgm.muted = !bgm.muted;
-    soundBtn.textContent = bgm.muted ? '🔇' : '🔊';
+    galaxyMusic.muted = !galaxyMusic.muted;
+    soundBtn.textContent = galaxyMusic.muted ? '🔇' : '🔊';
   });
 
   /* ------------------------------ Arranque ------------------------------ */
