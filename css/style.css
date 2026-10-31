@@ -455,21 +455,6 @@ section {
 .shake{animation:gsk .5s}
 @keyframes gsk{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
 
-/* ===== MENSAJE DE VOZ EN EL SOBRE ===== */
-.voz{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 12px;border-radius:16px;text-align:left;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5)}
-.voz-btn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--turquesa-oscuro,#168F8A);font-size:1.1rem;cursor:pointer}
-.voz.playing .voz-btn{animation:vp 1.4s infinite}
-@keyframes vp{from{box-shadow:0 0 0 0 rgba(255,255,255,.8)}to{box-shadow:0 0 0 14px rgba(255,255,255,0)}}
-.voz-mid{flex:1;min-width:0}
-.voz-bars{display:flex;align-items:center;gap:2px;height:26px}
-.voz-bars i{flex:1;height:calc(var(--h) * 1%);min-height:3px;background:#fff;border-radius:2px;opacity:.75}
-.voz.playing .voz-bars i{animation:vb .8s ease-in-out infinite alternate;animation-delay:var(--d)}
-@keyframes vb{to{transform:scaleY(.3)}}
-.voz-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.35);margin-top:6px;cursor:pointer}
-.voz-bar b{display:block;height:100%;width:0;background:#fff;border-radius:3px}
-.voz-t{font-size:.75rem;font-variant-numeric:tabular-nums}
-.voz-cap{margin-top:8px;font-size:.8rem;opacity:.95}
-
 /* Main-page animation effects */
 :root{--shadow:0 6px 18px rgba(53,207,196,.25)}
 body{background:linear-gradient(135deg,#F4FCFB,#E8FFFC) fixed}

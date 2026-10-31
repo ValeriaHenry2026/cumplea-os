@@ -20,9 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     const sobres = [
-        { titulo: "Para cuando estés triste", mensaje: "Recuerda que Dios y las personas que te queremos estamos aquí para ti. Esta tristeza es pasajera. Te abrazo a la distancia. ♡" },
+        { titulo: "Para cuando estés triste", mensaje: "Recuerda que Dios y los que te queremos estamos aquí para ti. Esta tristeza es pasajera. Te abrazo a la distancia. ♡" },
         { titulo: "Para cuando dudes de ti", mensaje: "Mírate con mis ojos. Eres increíble y capaz de lograr todo. Yo creo en ti." },
-        { titulo: "Para cuando no estemos cerca", mensaje: "Cierra los ojos y recuerda mi voz. Mi corazón está contigo." },
+        { titulo: "Para cuando no estemos cerca", mensaje: "Recorda que te pienso dia y noche, seguramente te estoy pensando en este momento jaja. Piensa en todos nuestros momentos bonitos y en los que todavía nos faltan por vivir. Te amo y siempre puedes contar conmigo. ♡" },
         { titulo: "Para cuando tengas un mal día", mensaje: "Respira profundo. Dios tiene el control y yo estoy aquí para escucharte. Todo estará bien." },
         { titulo: "Para recordar el propósito", mensaje: "Dios no se equivoca. El lugar donde estás es parte de Su plan. Confía en Su tiempo. ♡" }
     ];
@@ -927,9 +927,7 @@ const CONFIG = {
 /*NUEVOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO V1.2*/
 /* ============ CONFIGURA AQUÍ ============ */
 const GATE_CFG = {
-  fechas: ['21/03/2026'],                 // fecha(s) válidas, formato DD/MM/AAAA
-  voz: 'audio/jijijja.m4a',         // tu nota de voz
-  sobreVoz: /no estemos cerca/i           // título del sobre que lleva tu voz
+  fechas: ['21/03/2026']                 // fecha(s) válidas, formato DD/MM/AAAA
 };
 
 (() => {
@@ -1035,7 +1033,6 @@ const GATE_CFG = {
     const latido = k => { let i = 0; const t = setInterval(() => { V([70, 90, 110]); if (++i >= k) clearInterval(t); }, 1000); };
     document.addEventListener('click', e => {
       const t = e.target;
-      if (t.closest('.voz')) return;
       if (t.closest('.reason-item')) V(35);
       else if (t.closest('.envelope')) V([25, 40, 25]);
       else if (t.closest('.memory-card')) V(18);
@@ -1049,30 +1046,5 @@ const GATE_CFG = {
     const intro = $('#intro'); if (intro) intro.addEventListener('pointerdown', () => V([50, 60, 50, 60, 300]));
     const gal = $('#gallery-section'); let un = 0;
     if (gal) new MutationObserver(() => { if (!un && gal.classList.contains('unlocked')) { un = 1; V([100, 60, 100, 60, 300]); } }).observe(gal, { attributes: true, attributeFilter: ['class'] });
-
-    /* mensaje de voz dentro del sobre */
-    const envs = $$('.envelope');
-    const env = envs.find(e => CFG.sobreVoz.test(e.textContent)) || envs[2];
-    if (!env) return;
-    const bars = Array.from({ length: 28 }, () => `<i style="--h:${R(25, 100) | 0};--d:${R(0, .8).toFixed(2)}s"></i>`).join('');
-    const box = document.createElement('div');
-    box.innerHTML = `<div class="voz"><button class="voz-btn" type="button" aria-label="Reproducir mensaje">▶</button><div class="voz-mid"><div class="voz-bars">${bars}</div><div class="voz-bar"><b></b></div></div><span class="voz-t">0:00</span></div><p class="voz-cap">🎙️ Un mensaje de Henry, solo para ti</p>`;
-    env.querySelector('.envelope-msg').appendChild(box);
-    const voz = box.querySelector('.voz'), btn = box.querySelector('.voz-btn'), prog = box.querySelector('.voz-bar b'), tm = box.querySelector('.voz-t');
-    voz.addEventListener('click', e => e.stopPropagation());
-    const au = new Audio(CFG.voz); au.preload = 'metadata';
-    const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
-    let pv = .4, tw;
-    const fade = to => { clearInterval(tw); tw = setInterval(() => { if (!bgm) return clearInterval(tw); const d = to - bgm.volume; if (Math.abs(d) < .03) { bgm.volume = to; clearInterval(tw); } else bgm.volume = Math.max(0, Math.min(1, bgm.volume + Math.sign(d) * .03)); }, 60); };
-    au.addEventListener('loadedmetadata', () => tm.textContent = fmt(au.duration));
-    au.addEventListener('timeupdate', () => { if (au.duration) { prog.style.width = au.currentTime / au.duration * 100 + '%'; tm.textContent = fmt(au.currentTime); } });
-    au.addEventListener('play', () => { voz.classList.add('playing'); btn.textContent = '⏸'; V(30); if (bgm) { pv = bgm.volume || .4; fade(.08); } });
-    const stop = () => { voz.classList.remove('playing'); btn.textContent = '▶'; if (bgm) fade(pv); };
-    au.addEventListener('pause', stop);
-    au.addEventListener('ended', () => { stop(); prog.style.width = '0'; tm.textContent = fmt(au.duration); });
-    au.addEventListener('error', () => { tm.textContent = '—'; console.warn('No se encontró', CFG.voz); });
-    btn.addEventListener('click', () => { au.paused ? au.play().catch(() => {}) : au.pause(); });
-    box.querySelector('.voz-bar').addEventListener('click', e => { const r = e.currentTarget.getBoundingClientRect(); if (au.duration) au.currentTime = (e.clientX - r.left) / r.width * au.duration; });
-    new MutationObserver(() => { if (!env.classList.contains('open')) au.pause(); }).observe(env, { attributes: true, attributeFilter: ['class'] });
   });
 })();
