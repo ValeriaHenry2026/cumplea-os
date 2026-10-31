@@ -5,10 +5,10 @@
 /* ---------- 1. PANTALLAS QUE SÍ CABEN EN EL CELULAR ---------- */
 section { min-height: 100vh; min-height: 100dvh; }
 
-/* Las animaciones 3D ya no atrapan el dedo: el scroll siempre funciona */
-#souls-frame, #lock-frame { pointer-events: none; }
+/* Permite arrastrar las escenas 3D dentro de los iframes y la página. */
+#souls-frame, #lock-frame { pointer-events: auto; }
 #galaxy-section #gl canvas,
-#tulip-stage #tulip-gl canvas { touch-action: pan-y !important; }
+#tulip-stage #tulip-gl canvas { touch-action: none !important; }
 
 /* Título + animación + botones caben juntos en una sola pantalla */
 #souls-section, #lock-section, #tulip-section {
