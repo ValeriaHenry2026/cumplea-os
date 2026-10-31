@@ -3,7 +3,7 @@
    ===================================================================== */
 
 /* ---------- 1. PANTALLAS QUE SÍ CABEN EN EL CELULAR ---------- */
-section { min-height: 100vh; min-height: 100dvh; }
+section { min-height: 100vh; min-height: 100svh; }
 
 /* Permite arrastrar las escenas 3D dentro de los iframes y la página. */
 #souls-frame, #lock-frame { pointer-events: auto; }
@@ -23,21 +23,21 @@ section { min-height: 100vh; min-height: 100dvh; }
 }
 #souls-frame, #lock-frame {
     height: clamp(340px, calc(100vh - 300px), 640px);
-    height: clamp(340px, calc(100dvh - 300px), 640px);
+    height: clamp(340px, calc(100svh - 300px), 640px);
     min-height: 0;
 }
 #tulip-stage {
     height: clamp(330px, calc(100vh - 300px), 620px);
-    height: clamp(330px, calc(100dvh - 300px), 620px);
+    height: clamp(330px, calc(100svh - 300px), 620px);
     min-height: 0;
 }
 #galaxy-section {
-    min-height: 100vh; min-height: 100dvh;
+    min-height: 100vh; min-height: 100svh;
     padding: 26px 12px 18px; gap: 12px; justify-content: center;
 }
 #galaxy-section .stage {
     height: clamp(400px, calc(100vh - 215px), 660px);
-    height: clamp(400px, calc(100dvh - 215px), 660px);
+    height: clamp(400px, calc(100svh - 215px), 660px);
     min-height: 0;
 }
 #souls-section .scroll-cue, #lock-section .scroll-cue, #tulip-section .scroll-cue { display: none; }
@@ -229,4 +229,64 @@ body.no-scroll #petals { display: none; }
 @media (prefers-reduced-motion: reduce) {
     #petals, .pop { display: none; }
     .divider i, .divider svg, .next-row.done .next-btn, #next-hint.show, #souls-frame, #lock-frame, #tulip-stage { animation: none; }
+}
+
+
+/* =====================================================================
+   RENDIMIENTO (v3) · todo lo de abajo es solo para que el scroll sea fluido
+   ===================================================================== */
+
+/* Fondo: el degradado "fixed" del body se repintaba en cada frame del scroll en el celular.
+   Ahora vive dentro de la capa fija de la aurora (que se compone en GPU y no se repinta). */
+body { background: #F4FCFB; }
+body::before {
+    background:
+        radial-gradient(40% 40% at 20% 30%, rgba(53, 207, 196, .28), transparent),
+        radial-gradient(35% 35% at 80% 70%, rgba(217, 185, 110, .24), transparent),
+        radial-gradient(40% 40% at 70% 20%, rgba(189, 245, 240, .6), transparent),
+        linear-gradient(135deg, #F4FCFB, #E8FFFC);
+    will-change: transform;
+}
+
+/* Aparición de secciones: sin blur(10px) (filtro sobre secciones enteras con iframes y WebGL).
+   Se conserva el efecto de subir + crecer + aparecer, que se hace solo en GPU. */
+.observe {
+    filter: none;
+    transform: translate3d(0, 50px, 0) scale(.96);
+    transition: opacity .9s ease-out, transform .9s cubic-bezier(.2, .8, .2, 1);
+}
+.observe.visible { filter: none; transform: none; }
+
+/* Barra de progreso: se mueve con transform (la actualiza script.js) */
+#progress-bar { width: 100% !important; transform: translate3d(-100%, 0, 0); will-change: transform; }
+
+/* Marcos 3D: el brillo que cambiaba el box-shadow en cada frame obligaba a repintar; ahora es fijo */
+#souls-frame, #lock-frame, #tulip-stage {
+    animation: none !important;
+    box-shadow: 0 14px 40px rgba(22, 143, 138, .24), 0 0 26px rgba(53, 207, 196, .2);
+}
+
+/* Mientras se hace scroll se pausan los adornos infinitos del CSS (se reanudan solos al parar) */
+body.is-scrolling :is(.script-title, .scroll-cue, .scroll-indicator, .sparkle, .number-20-container, .divider i, .divider svg,
+    #music-btn, .welcome-content, .pulse-btn, .success-text, .reasons-meter p, .hb, .bokeh span, .intro-heart, .hand,
+    .rings span, .lock-note, .tc, #petals i),
+body.is-scrolling :is(.number-20-container, .welcome-content, .faith-container, .game-card, #final-message, .tc, #music-btn.playing)::before,
+body.is-scrolling :is(.number-20-container, .welcome-content, .faith-container, .game-card, #final-message, .tc, #music-btn.playing)::after,
+body.is-scrolling::before {
+    animation-play-state: paused !important;
+}
+
+/* Celular / pantallas táctiles: el desenfoque de fondo (backdrop-filter) es lo más caro de pintar.
+   Se cambia por un fondo un poco más opaco, que se ve casi igual sobre este fondo claro. */
+@media (max-width: 900px), (hover: none) {
+    .glass-card, .glass-btn, .time-box, .modal, #next-hint, #galaxy-section .sound {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+    .glass-card { background: rgba(255, 255, 255, .82); }
+    .glass-btn { background: rgba(255, 255, 255, .8); }
+    .modal.glass-card { background: rgba(24, 69, 66, .78); }
+    .time-box { background: rgba(236, 255, 253, .42); }
+    #next-hint { background: rgba(255, 255, 255, .92); }
+    .pop { text-shadow: none; }
 }

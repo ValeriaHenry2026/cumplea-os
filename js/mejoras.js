@@ -11,6 +11,7 @@
   const R = (a, b) => a + Math.random() * (b - a);
   const V = (p) => { try { navigator.vibrate && navigator.vibrate(p); } catch (_) {} };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const COARSE = matchMedia('(pointer: coarse)').matches || innerWidth < 700;
   const behavior = reduce ? 'auto' : 'smooth';
 
   function init() {
@@ -33,6 +34,8 @@
     const COLORS = ['#35CFC4', '#D9B96E', '#BDF5F0', '#ffffff', '#ff9ec4'];
     function pop(x, y, n = 14) {
       if (reduce) return;
+      if (COARSE) n = Math.max(6, Math.round(n * .5));
+      if (document.querySelectorAll('.pop').length > 36) return;
       const G = ['♡', '✦', '✿', '♥', '✧'];
       for (let i = 0; i < n; i++) {
         const s = document.createElement('span');
@@ -78,7 +81,7 @@
       layer.id = 'petals';
       layer.setAttribute('aria-hidden', 'true');
       const PC = ['rgba(189,245,240,.95)', 'rgba(53,207,196,.75)', 'rgba(217,185,110,.7)', 'rgba(255,255,255,.95)'];
-      for (let i = 0; i < 16; i++) {
+      for (let i = 0; i < (COARSE ? 7 : 16); i++) {
         const p = document.createElement('i');
         p.style.cssText = `--x:${R(0, 100)}vw;--s:${R(9, 17)}px;--d:${R(15, 27)}s;--dl:${-R(0, 27)}s;--sw:${R(30, 90)}px;--c:${PC[i % PC.length]}`;
         layer.appendChild(p);
@@ -174,6 +177,33 @@
       if (d.type === 'done') markDone(it);
     });
 
+    /* Bandera global de scroll: pausa adornos CSS y baja los 3D a ~30fps mientras se desliza */
+    let scrollT = 0;
+    addEventListener('scroll', () => {
+      if (!window.__epicScrolling) { window.__epicScrolling = true; document.body.classList.add('is-scrolling'); }
+      clearTimeout(scrollT);
+      scrollT = setTimeout(() => { window.__epicScrolling = false; document.body.classList.remove('is-scrolling'); }, 140);
+    }, { passive: true });
+
+    /* Los iframes 3D se cargan al acercarse y cuando el scroll se detiene (no a mitad de un deslizón) */
+    const lazyFrames = $$('iframe[data-src]');
+    const loadFrame = (f) => { if (f.dataset.src) { f.src = f.dataset.src; delete f.dataset.src; } };
+    if ('IntersectionObserver' in window) {
+      const fio = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        fio.unobserve(e.target);
+        const go = () => loadFrame(e.target);
+        const wait = () => {
+          if (e.intersectionRatio < .3 && window.__epicScrolling) return setTimeout(wait, 200);
+          window.requestIdleCallback ? requestIdleCallback(go, { timeout: 1500 }) : setTimeout(go, 50);
+        };
+        wait();
+      }), { rootMargin: '120% 0px', threshold: [0, .3] });
+      lazyFrames.forEach((f) => fio.observe(f));
+    } else {
+      lazyFrames.forEach(loadFrame);
+    }
+
     /* Detecta cuándo una animación entra en pantalla para iniciarla. */
     let touching = false, idleT;
     const schedule = () => { clearTimeout(idleT); idleT = setTimeout(evaluate, 150); };
@@ -200,6 +230,15 @@
         best.entered = true;
         if (best.kind !== 'galaxy') setTimeout(() => { if (best.entered) startItem(best); }, 700);
       }
+    }
+
+    /* Apenas una animación sale de la pantalla se detiene (sin esperar a que pare el scroll) */
+    if ('IntersectionObserver' in window) {
+      const sio = new IntersectionObserver((es) => es.forEach((e) => {
+        const it = items.find((x) => x.el === e.target);
+        if (it && !e.isIntersecting && it.entered) { it.entered = false; stopItem(it); }
+      }), { rootMargin: '60px 0px' });
+      items.forEach((it) => { if (it.el) sio.observe(it.el); });
     }
 
     /* ---------------------------------------------------------------
@@ -240,7 +279,7 @@
     const bump = () => { lastAct = Date.now(); hint.classList.remove('show'); };
     ['scroll', 'touchstart', 'touchmove', 'pointerdown', 'keydown', 'wheel'].forEach((ev) => addEventListener(ev, bump, { passive: true }));
     setInterval(() => {
-      if (Date.now() - lastAct < 7000 || hint.classList.contains('show') || !mainVisible()) return;
+      if (document.hidden || window.__epicScrolling || Date.now() - lastAct < 7000 || hint.classList.contains('show') || !mainVisible()) return;
       const modal = $('#reason-modal');
       if (modal && getComputedStyle(modal).display !== 'none') return;
       if (scrollY + innerHeight >= document.documentElement.scrollHeight - 60) return;
@@ -284,7 +323,8 @@
         });
         $$('button', dots).forEach((b, i) => b.classList.toggle('on', i === bi));
       };
-      car.addEventListener('scroll', () => requestAnimationFrame(paint), { passive: true });
+      let paintQ = false;
+      car.addEventListener('scroll', () => { if (paintQ) return; paintQ = true; requestAnimationFrame(() => { paintQ = false; paint(); }); }, { passive: true });
       paint();
       setTimeout(paint, 600);
     }

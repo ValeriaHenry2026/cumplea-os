@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { titulo: "Para recordar el propósito", mensaje: "Dios no se equivoca. El lugar donde estás es parte de Su plan. Confía en Su tiempo. ♡" }
     ];
 
+    const MOBILE = matchMedia('(pointer: coarse)').matches || innerWidth < 700;
     const coloresParticulas = ['#35CFC4', '#BDF5F0', '#D9B96E', '#FFFFFF'];
 
     // --- 2. FONDO INTERACTIVO DE PANTALLA INICIAL ---
@@ -196,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const div = document.createElement('div');
         div.className = 'photo-card';
         div.style.setProperty('--rot', Math.random() * 6 - 3);
-        div.innerHTML = `<img src="${foto.src}" onerror="this.src='https://via.placeholder.com/300x400/BDF5F0/168F8A?text=Foto+${i+1}'"><p class="photo-caption">${foto.caption}</p>`;
+        div.innerHTML = `<img src="${foto.src}" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/300x400/BDF5F0/168F8A?text=Foto+${i+1}'"><p class="photo-caption">${foto.caption}</p>`;
         carousel.appendChild(div);
     });
     document.getElementById('gallery-prev').addEventListener('click', () => {
@@ -244,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById('btn-infinito').addEventListener('click', () => {
         document.getElementById('game-result').classList.remove('hidden-element');
-        lanzarConfeti(15);
+        lanzarConfeti(MOBILE ? 9 : 15);
     });
 
     // --- 8. SORPRESA FINAL ---
@@ -254,16 +255,24 @@ document.addEventListener("DOMContentLoaded", () => {
         surpriseBtn.classList.add('hidden-element');
         finalMessage.classList.remove('hidden-element');
         finalMessage.classList.add('reveal-animation');
-        lanzarConfeti(60);
+        lanzarConfeti(MOBILE ? 28 : 60);
         setTimeout(() => finalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
     });
 
     // Utilidades comunes (Observer de scroll y Confeti)
-    window.addEventListener('scroll', () => {
-        const wScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        document.getElementById("progress-bar").style.width = (wScroll / height) * 100 + "%";
-    });
+    // Barra de progreso: sin leer el layout en cada evento (usa transform y un solo cálculo por frame)
+    const progressBar = document.getElementById('progress-bar');
+    let progMax = 1, progTick = false;
+    const measureProg = () => { progMax = Math.max(1, document.documentElement.scrollHeight - innerHeight); };
+    const paintProg = () => {
+        progTick = false;
+        const p = Math.min(1, Math.max(0, (window.scrollY || 0) / progMax));
+        progressBar.style.transform = `translate3d(${(p - 1) * 100}%,0,0)`;
+    };
+    window.addEventListener('scroll', () => { if (!progTick) { progTick = true; requestAnimationFrame(paintProg); } }, { passive: true });
+    if (window.ResizeObserver) new ResizeObserver(measureProg).observe(document.getElementById('main-content'));
+    window.addEventListener('load', measureProg);
+    measureProg();
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
@@ -344,7 +353,7 @@ const CONFIG = {
   const flash = $('flash'), hint = $('hint'), soundBtn = $('sound'), bgm = $('bg-music');
   const galaxyMusic = new Audio('audio/M.A.I.mp3');
   galaxyMusic.loop = true;
-  galaxyMusic.preload = 'auto';
+  galaxyMusic.preload = 'none';
 
   if (typeof THREE === 'undefined') {
     intro.querySelector('.tap-text').textContent = 'No se pudo cargar Three.js';
@@ -360,7 +369,7 @@ const CONFIG = {
   /* ------------------------- Bokeh de corazones (CSS) ------------------------- */
   (function bokeh() {
     const box = $('bokeh');
-    for (let i = 0; i < 22; i++) {
+    for (let i = 0; i < (LOW ? 10 : 22); i++) {
       const s = document.createElement('span');
       s.textContent = '♥';
       s.style.cssText =
@@ -379,7 +388,7 @@ const CONFIG = {
     intro.querySelector('.tap-text').textContent = 'Tu navegador no soporta WebGL';
     return;
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LOW ? 1.75 : 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LOW ? 1.4 : 2));
   renderer.setClearColor(0x000000, 1);
   $('gl').appendChild(renderer.domElement);
   const glEl = renderer.domElement;
@@ -693,17 +702,25 @@ const CONFIG = {
         addSprite(tex, aspect, h, .2 + rand() * 1.7, 'text');
       }
     });
-    const photoLoader = new THREE.TextureLoader();
-    photoLoader.setCrossOrigin(undefined);
+    // Las fotos se reducen antes de subirlas a la GPU (una foto de celular son ~48 MB de VRAM sin comprimir)
+    const maxSide = LOW ? 512 : 768;
     CONFIG.images.forEach((src) => {
-      photoLoader.load(new URL(src, document.baseURI).href, (tex) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => {
+        const k = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        const tex = new THREE.CanvasTexture(cv);
         tex.minFilter = THREE.LinearFilter;
         tex.magFilter = THREE.LinearFilter;
         tex.generateMipmaps = false;
-        const aspect = tex.image.width / tex.image.height;
-        const height = .8 + rand() * .25;
-        addSprite(tex, aspect, height, 0, 'photo', nextPhotoSpot());
-      }, undefined, (error) => console.error('No se pudo cargar la foto de la galaxia:', src, error));
+        addSprite(tex, w / h, .8 + rand() * .25, 0, 'photo', nextPhotoSpot());
+      };
+      img.onerror = () => console.error('No se pudo cargar la foto de la galaxia:', src);
+      img.src = new URL(src, document.baseURI).href;
     });
   }
 
@@ -770,8 +787,7 @@ const CONFIG = {
     camera.position.set(0, 0, 0);
     camera.lookAt(0, 0, -1);
     camera.fov = 60; camera.updateProjectionMatrix();
-    clock.getDelta();
-    requestAnimationFrame(loop);
+    kick();
   }
 
   function updateWarp(dt) {
@@ -869,12 +885,20 @@ const CONFIG = {
     renderer.render(scene, camera);
   }
 
+  // El render se duerme cuando la galaxia no se ve y baja a ~30fps mientras se hace scroll
+  let rafId = 0, inView = true, skipFrame = false;
+  function kick() { if (!rafId && state !== 'idle' && inView) { clock.getDelta(); rafId = requestAnimationFrame(loop); } }
   function loop() {
-    if (state === 'idle') return;
-    requestAnimationFrame(loop);
+    rafId = 0;
+    if (state === 'idle' || !inView) return;
+    rafId = requestAnimationFrame(loop);
+    if (window.__epicScrolling) { skipFrame = !skipFrame; if (skipFrame) return; }
     const dt = Math.min(clock.getDelta(), .05);
     timeU.value += dt;
     if (state === 'warp') updateWarp(dt); else updateMain(dt);
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((es) => { inView = es[0].isIntersecting; if (inView) kick(); }, { rootMargin: '80px 0px' }).observe(stage);
   }
 
   /* ------------------------------ Audio ------------------------------ */
@@ -900,9 +924,12 @@ const CONFIG = {
   /* ------------------------------ Arranque ------------------------------ */
   let ready = false, wantStart = false, started = false;
 
+  let built = false;
+  const build = () => { if (built) return; built = true; buildFloaters(); };
   function start() {
     if (started) return;
     started = true;
+    build();
     intro.classList.add('hide');
     startAudio();
     setTimeout(() => { if (ready) beginWarp(); else wantStart = true; }, 450);
@@ -918,10 +945,21 @@ const CONFIG = {
     : Promise.resolve();
 
   fontsReady.then(() => {
-    buildFloaters();
     ready = true;
     if (wantStart) beginWarp();
   });
+  const gSec = document.getElementById('galaxy-section');
+  if (gSec && 'IntersectionObserver' in window) {
+    const near = new IntersectionObserver((es) => {
+      if (!es.some((e) => e.isIntersecting)) return;
+      near.disconnect();
+      const go = () => fontsReady.then(build);
+      window.requestIdleCallback ? requestIdleCallback(go, { timeout: 2000 }) : setTimeout(go, 300);
+    }, { rootMargin: '150% 0px' });
+    near.observe(gSec);
+  } else {
+    fontsReady.then(build);
+  }
 })();
 
 /*NUEVOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO V1.2*/
